@@ -1,0 +1,369 @@
+GoBridge Workshop - Bienvenidos!
+Gracias por asistir!
+
+22 de marzo del 2019
+
+Eduar Tua
+Ingeniero - Kubernetes
+eduartua@gmail.com
+eduartua.com
+@eduartua
+
+
+* Bienvenidos al workshop Introducción a la Concurrencia de GoBridge!
+.image images/gopher-brown.jpg _ 300
+.caption _Gopher_ by [[http://www.reneefrench.com][Renée French]]
+
+
+* Backchannel para este workshop
+`#gobridge-monterrey` channel en Gophers Slack.
+
+Pregunta lo que requieras, *Comenzando* *ya!*
+
+Si no estás en ese grupo de Slack, pide una invitación:
+
+.link https://invite.slack.golangbridge.org/ https://invite.slack.golangbridge.org/
+
+
+* Artículos de Orden
+- Levanta la mano
+De manera que el instructor y los TAs puedan dar asistencia a todos, te pedimos, por favor levantes tu mano antes de hacer una pregunta. Y por favor, has preguntas! =)
+
+- Workshop storyline
+Algunas veces compilamos los mejores tweets y otros posts de redes sociales en una storyline. Usa el hashtag #gobridge cuando postees de manera que podamos encontrarte!
+
+
+* Código de Conducta
+Un recordatorio de que seguimos el Código de Conducta de Go/GoBridge. Puede ser encontrado aquí:
+
+.link http://coc.golangbridge.org http://coc.golangbridge.org
+
+
+* Estamos para ayudarte
+
+Organizers
+- Eduar Tua
+- Chuy Lerma
+
+Teacher(s)
+- ...
+- ...
+
+TAs
+- ..
+- ..
+
+
+* Nada de timidez!
+
+- Has preguntas!
+
+- Los TAs e instructores estamos aquí para ayudar
+
+
+* ¿Porqué estamos aquí?
+
+- Para educar comunidades subrepresentadas
+- Para enseñar habilidades ténicas
+- Para incrementar la adopción de Go
+- Para fomentar la diversidad en Go
+
+GoBridge se dedica a trabajar para que los creadores de tecnología reflejen nuestra sociedad diversa, porque la diversidad fomenta la innovación..
+
+  Ha sido mi experiencia personal y también está bien documentado en el mundo académico,
+  que los diversos equipos son más innovadores, creativos y adaptables en las culturas modernas.
+  La diversidad es fuerza. La diversidad es la longevidad.
+.caption Andrew Gerrand - GopherCon 2015 closing keynote
+
+
+* Es un proyecto de comunidad!
+
+- Todos los materiales de GoBridge son gratutos y libres para ser reutilizados por cualquiera (restricciones aplican para nombrarlo GoBridge workshop.)
+
+- Muchas personas trabajan para hacer esto posible. Únete a nosotros!
+
+- GoBridge es para de la organización principal sin fines de lucro Bridge Foundry.
+
+
+* Excelentes recursos y comunidad.: No estás solo.
+
+- La Wiki de Go tienes muchos recursos y links a información de todo tipo:
+
+.link https://github.com/golang/go/wiki https://github.com/golang/go/wiki
+
+- Gophers Slack: Probablemente habrá un canales para distintas ciudades y para tus proyectos favoritos open source:
+
+.link https://invite.slack.golangbridge.org/ https://invite.slack.golangbridge.org/
+
+- Hay foros donde se discute todo acerca de Go:
+
+.link https://forum.golangbridge.org https://forum.golangbridge.org
+.link https://groups.google.com/forum/#!forum/golang-nuts https://groups.google.com/forum/#!forum/golang-nuts
+
+- Women Who Go: Un grupo de Gophers exclusivamente para aquellas que se identifican como mujeres. Encuentra o comienza un capítulo local:
+
+.link http://www.womenwhogo.org http://www.womenwhogo.org
+
+
+* Objetivos del taller
+
+Hoy aprenderán...
+
+- Concurrencia vs Paralelismo
+- Intro a WaitGroup
+- Method Sets
+- Condición Race
+- Mutex
+- Atomic
+
+* ¿Qué es Go?
+Sencillo, Poético, Conciso
+
+Tanto es así, que inspiró una lista cada vez mayor de proverbios:
+
+.link http://go-proverbs.github.io http://go-proverbs.github.io
+
+
+* Antes de que comencemos...
+Agradezcamos a nuestros fantásticos sponsors!
+
+
+* Cerounoio
+
+  es la escuela de programación con los programas más actualizados y 
+  la mejor red de instructores de todo México.
+
+.link http://cerouno.io http://cerouno.io
+
+.image images/cerouno.png _ 200
+
+* Concurrencia vs Paralelismo
+
+En programación, concurrencia es la composición de independientemente ejecutar procesos, mientras que paralelismo es la ejecución simultánea de (posiblemente relacionados) procesos computacionales. 
+  La concurrencia se trata de lidiar con muchas cosas a la vez.
+  El paralelismo se trata de hacer muchas cosas a la vez.
+
+* Concurrencia en el mundo real 
+
+- Baño compartido
+- Comida compartida en apartamento
+- Semáforos en intersecciones
+
+* Baño compartido
+
+¿Cómo aseguramos de que solo entre una persona una sola vez en cierto momento? 
+.image images/bathroom.png _ 200
+
+Respuesta
+- La cerradura detiene a la gente de afuera si alguién lo está ocupando
+- Regla: espera si la puerta está bloqueda
+
+* Comida compartida en apartamento
+¿Cómo aseguramos de que siempre haya leche fresca?
+
+Respuesta
+- Notas en la puerta del refri (Postit)
+- Reglas:
+  1. Deja una nota si se necesita leche
+  2. Deja una nota si saliste a comprar leche
+
+* Semáforos en intersecciones
+¿Cómo aseguramos que los carros no choquen?
+.image images/tl.jpg _ 200
+
+Respuesta
+- El semáforo muestra la dirección del flujo
+- Reglas
+1. No avance si la luz es amarilla o roja
+2. Cuando cambie de rojo a verde, espere que los carros terminen de pasar
+
+* Propiedad de los sistemas concurrentes
+- Múltiples actores
+Personas
+Carros
+
+- Recursos compartidos
+Baños
+Calle
+Comida
+
+- Reglas de acceso (uno a la vez, una sola dirección al mismo tiempo, alguién compra el mandado)
+
+* Concurrencia en sistemas computacionales
+- Procesos múltiples en el Sistema Operativo
+- Múltiples hilos dentro de un mismo proceso
+
+* Usos de la concurrencia
+- Producer/Consumer
+.image images/pc.png 130 _
+- Asynchronous I/O
+- Programas paralelos
+
+* Propiedades de sistemas computacionales concurrentes
+- Múltiples hilos
+- Recursos compartidos
+1. Memoria - Variables (heaps - globales)
+2. Dispositivos (Network - Disco)
+
+* Entendiendo el scheduler
+- Garantía: Código eventualmete corre 
+- No Garantiza: Equidad - Cumplimiento de tiempo
+
+* ¿Cuándo no es favorable la concurrencia?
+- No hay data compartida o comunicación
+- Data de solo lectura (constante)
+Ejemplos
+Variables locales en Thread Stack
+Constantes globales
+
+* Riesgos en la concurrencia
+- Dos threads acceden al mismo recurso compartido sin ninguna sincronización
+- Un thread modificando un recurso
+
+* ¿Qué es compartido?
+- Variables locales no son compartidas
+Aquí nos referimos al stack del thread
+Nunca almacenar un puntero a un variable local en una estructura de datos global
+
+- Variables globales son compartidas
+Almacenadas en segmentos de datos accesible por todos los threads
+
+- Variables en Heap pueden ser compartidas
+
+* Mecanismos para manejar la concurrencia
+- Mecanismos de sincronización permiten a los programas escribir reglas para concurrencia
+- Atomicidad: asegura que ningún otro thread cambie datos mientras corren 
+- Sincronización condicional: asegura que el código en diferentes threads corra en el orden correcto
+
+* WaitGroup
+Un WaitGroup espera que una colección de gorutinas terminen su trabajo
+
+  La gorutina de main llama Add para configurar el número de gorutinas 
+  por las que tiene que esperar. Luego cada una de las gorutinas corre y 
+  llama a Done cuando terminan. Al mismo tiempo, Wait puede ser usado para 
+  bloquear hasta que todas las gorutinas hayan finalizado. 
+  Escribir código concurrente es súper fácil: todo lo que tenemos que hacer 
+  es poner “go” en frente de una llamada a una función o método.
+
+Paquete sync
+.link https://play.golang.org/p/bnI0akWF9f Código inicial
+
+* Revisión de Method Sets
+“El method set de un tipo determina las INTERFACES que ese tipo  implementa.....”
+.link https://golang.org/ref/spec#Method_sets ~ golang spec
+
+Receivers-------Values
+-----------------------------------------------
+(t T)---------------T and *T
+(t *T)-------------*T
+
+.link https://play.golang.org/p/lM7mOR7-QEZ Código 
+
+* Documentación
+Son llamadas goroutinas porque los términos existentes —threads, coroutines, 
+procesos, entre otros — transmiten connotaciones inexactas. Una goroutine tiene 
+un modelo simple: es una función ejecutándose concurrentemente con otras 
+goroutinas en el mismo espacio de memoria (address space).
+
+.link https://golang.org/doc/effective_go.html#concurrency Effective Go
+.link https://golang.org/ref/spec#Go_statements Espec
+
+.link https://play.golang.org/p/N54UGnObrY3 Código
+
+* Data race
+.image images/data_race.png 550 _
+
+* Data race
+.link https://play.golang.org/ Código
+
+* Mutex
+A “mutex” es un bloqueo de exclusión mutua. Los Mutexes nos permiten bloquear el código de manera que solamente una goroutine puede acceder ese pedazo de código bloqueado.
+
+.link https://golang.org/pkg/sync/#Mutex Documentación de Mutex
+
+* GoBridge Workshop - Closing Notes
+Gracias por venir!
+
+22 de marzo del 2019
+
+Eduar Tua
+Ingeniero de Software
+eduartua@gmail.com
+eduartua.com
+@eduartua
+
+
+* Has completado el taller GoBridge Introducción a la concurrencia!
+Felicidades!
+
+.image images/gopher-brown.jpg _ 300
+.caption _Gopher_ by [[http://www.reneefrench.com][Renée French]]
+
+* Por favor agradezcamos a nuestro sponsor!
+* Cerounoio
+
+  es la escuela de programación con los programas más actualizados y 
+  la mejor red de instructores de todo México.
+
+.link http://cerouno.io http://cerouno.io
+
+.image images/cerouno.png _ 200
+
+
+* Gracias a los voluntarios!
+
+voluntarios
+- Chuy
+- Alejandro
+
+
+*GoBridge*
+December 2015 - now
+Volunteer (Teacher, Event Organizer)
+
+
+* Celebrate!
+
+- Info about after-party, if any.
+
+- Include parking info and directions.
+
+
+* Recap
+
+- List top 3 things that were taught.
+
+- Would students like to share what they learned?
+
+
+* Participate in your local Go community
+
+Information for each local Go communities.
+
+- Go meetup...
+
+- GoBridge local chapter...
+
+- Local Women Who Go chapter...
+
+
+* Participate in the GoBridge Community
+
+- Twitter: @golangbridge
+
+- Join the #gobridge channel on Gophers Slack (invite: [[https://invite.slack.golangbridge.org/][https://invite.slack.golangbridge.org/]])
+
+- Participate in the Go Forum: [[https://forum.golangbridge.org/][https://forum.golangbridge.org/]]
+
+- Reach out on the mailing-list: [[https://groups.google.com/forum/#!forum/gobridge][https://groups.google.com/forum/#!forum/gobridge]]
+
+- Email: support@golangbridge.org
+
+
+* Want to organize a workshop?
+
+.image images/gobridge.png _ 100
+
+The entry point for all workshop information, including how to kickoff or fund one:
+
+.link https://github.com/gobridge/workshops/ https://github.com/gobridge/workshops/
